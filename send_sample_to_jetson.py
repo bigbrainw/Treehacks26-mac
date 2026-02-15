@@ -59,7 +59,8 @@ def send_sample(jetson_url: str, count: int = 5):
 
 def main():
     load_dotenv(Path(__file__).parent / ".env")
-    jetson_url = os.environ.get("JETSON_URL", "https://3e75-68-65-175-56.ngrok-free.app/eeg")
+    base = os.environ.get("JETSON_URL", "https://8061-68-65-164-46.ngrok-free.app").rstrip("/")
+    jetson_url = f"{base}/eeg"
 
     print(f"Sending 5 sample payloads to {jetson_url}\n")
     send_sample(jetson_url, count=5)

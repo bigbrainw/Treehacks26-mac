@@ -367,8 +367,9 @@ class Cortex(Dispatcher):
             elif loaded_by_this_app == True:
                 self.emit('load_unload_profile_done', isLoaded=True)
             else:
-                self.setup_profile(self.profile_name, 'unload')
-                # warnings.warn("The profile " + name + " is loaded by other applications")
+                # Profile loaded by another app (e.g. Emotiv Launcher) - use it, don't unload (would fail with -32046)
+                print("Profile " + name + " loaded by other app; subscribing to use it.")
+                self.emit('load_unload_profile_done', isLoaded=True)
 
     def _handle_disconnect_headset(self, result_dic):
         print("Disconnect headset " + self.headset_id)

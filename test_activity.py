@@ -18,6 +18,9 @@ def main():
         if ctx:
             print(f"[{time.strftime('%H:%M:%S')}] {ctx.display_name}")
             print(f"         type={ctx.context_type} id={ctx.context_id}")
+            if ctx.reading_section:
+                r = ctx.reading_section
+                print(f"         reading_section: {r[:80]}{'...' if len(r) > 80 else ''}")
         else:
             print(f"[{time.strftime('%H:%M:%S')}] (no context)")
         time.sleep(2)

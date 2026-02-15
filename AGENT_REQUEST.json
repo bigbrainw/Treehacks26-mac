@@ -1,0 +1,24 @@
+{
+  "timestamp": 1739612345.678,
+  "activity": {
+    "app_name": "Chrome",
+    "window_title": "Complex Paper — arXiv",
+    "context_type": "website",
+    "context_id": "Chrome::arxiv.org",
+    "reading_section": null,
+    "duration_seconds": 180.5
+  },
+  "mental_state": {
+    "engagement": 0.32,
+    "stress": 0.58,
+    "relaxation": 0.42,
+    "focus": 0.35,
+    "excitement": null,
+    "interest": null,
+    "metrics": {
+      "met": [true, 0.32, true, 0.4, 0.35, true, 0.58, true, 0.42, true, 0.45, true, 0.35],
+      "time": 1739612345.678
+    }
+  },
+  "user_feedback": null
+}

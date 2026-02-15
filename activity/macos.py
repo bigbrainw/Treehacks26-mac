@@ -1,9 +1,9 @@
 """macOS-specific activity detection using AppleScript."""
 
 import subprocess
+import time
 from dataclasses import dataclass
 from typing import Optional
-
 
 @dataclass
 class WindowInfo:
@@ -59,6 +59,122 @@ def get_active_window_macos() -> Optional[WindowInfo]:
         )
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return None
+
+
+def get_reading_section_macos(app_name: str, window_title: str) -> Optional[str]:
+    """
+    Try to get which section/region the user is reading.
+    Uses: selected text, browser URL (incl. #anchor), or focused text snippet.
+    Returns None if not detectable. Requires Accessibility permission.
+    """
+    result: Optional[str] = None
+
+    # 1. Browser: get URL (may contain #section or path like /docs/section)
+    app_lower = app_name.lower()
+    if any(b in app_lower for b in ["chrome", "safari", "firefox", "edge", "brave"]):
+        url = _get_browser_url_macos(app_name)
+        if url:
+            # Use path + hash as section hint (e.g. /docs/api#auth, #heading-2)
+            if "#" in url:
+                result = url.split("#", 1)[1].strip() or url[:80]
+            else:
+                result = url[:120] if len(url) > 120 else url
+            return result
+
+    # 2. Selected text (strong signal – user is reading/selecting)
+    selected = _get_selected_text_macos()
+    if selected and len(selected.strip()) > 2:
+        # First line or first 100 chars as section hint
+        first_line = selected.split("\n")[0].strip()
+        return (first_line[:100] + "…") if len(first_line) > 100 else first_line
+
+    # 3. Focused element value (e.g. current paragraph in editor)
+    focused_val = _get_focused_value_macos()
+    if focused_val and len(focused_val.strip()) > 5:
+        first_line = focused_val.split("\n")[0].strip()
+        return (first_line[:80] + "…") if len(first_line) > 80 else first_line
+
+    return result
+
+
+def _get_browser_url_macos(app_name: str) -> Optional[str]:
+    """Get current tab URL from browser via AppleScript."""
+    try:
+        app_map = {
+            "google chrome": "get URL of active tab of front window",
+            "chrome": "get URL of active tab of front window",
+            "safari": "get URL of current tab of front window",
+            "firefox": "get URL of active tab of front window",
+            "microsoft edge": "get URL of active tab of front window",
+            "brave browser": "get URL of active tab of front window",
+        }
+        cmd = app_map.get(app_name.lower())
+        if not cmd:
+            return None
+        script = f'tell application "{app_name}" to {cmd}'
+        r = subprocess.run(
+            ["osascript", "-e", script],
+            capture_output=True,
+            text=True,
+            timeout=2,
+        )
+        if r.returncode == 0 and r.stdout and r.stdout.strip().startswith(("http", "file")):
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def _get_selected_text_macos() -> Optional[str]:
+    """Get AXSelectedText via AppleScript. Requires Accessibility permission."""
+    try:
+        script = """
+        tell application "System Events"
+            set frontApp to first process whose frontmost is true
+            try
+                set foc to focused element of front window of frontApp
+                if foc is not missing value then
+                    set v to value of attribute "AXSelectedText" of foc
+                    if v is not missing value and v is not "" then
+                        return v as text
+                    end if
+                end if
+            end try
+        end tell
+        return ""
+        """
+        r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=2)
+        if r.returncode == 0 and r.stdout and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def _get_focused_value_macos() -> Optional[str]:
+    """Get AXValue of focused element (e.g. text field content)."""
+    try:
+        script = """
+        tell application "System Events"
+            set frontApp to first process whose frontmost is true
+            try
+                set foc to focused element of front window of frontApp
+                if foc is not missing value then
+                    set v to value of attribute "AXValue" of foc
+                    if v is not missing value and v is not "" then
+                        return v as text
+                    end if
+                end if
+            end try
+        end tell
+        return ""
+        """
+        r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=2)
+        if r.returncode == 0 and r.stdout and len(r.stdout.strip()) > 2:
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return None
 
 
 def infer_context_type(app_name: str, window_title: str) -> str:

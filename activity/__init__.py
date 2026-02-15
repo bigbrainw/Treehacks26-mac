@@ -6,7 +6,11 @@ from dataclasses import dataclass, field
 from typing import Callable, Optional
 
 from .linux import get_active_window_x11, infer_context_type as infer_context_type_linux
-from .macos import get_active_window_macos, infer_context_type as infer_context_type_macos
+from .macos import (
+    get_active_window_macos,
+    get_reading_section_macos,
+    infer_context_type as infer_context_type_macos,
+)
 
 __all__ = ["ActivityMonitor", "ActivityContext"]
 
@@ -20,6 +24,7 @@ class ActivityContext:
     context_type: str  # "app" | "website" | "file" | "browser" | "terminal"
     context_id: str
     detected_at: float = field(default_factory=time.time)
+    reading_section: Optional[str] = None  # Section/region user is reading (selected text, URL, etc.)
 
     @property
     def display_name(self) -> str:
@@ -32,13 +37,16 @@ class ActivityContext:
 
     def to_dict(self) -> dict:
         """Serialize for JSON payload."""
-        return {
+        d = {
             "app_name": self.app_name,
             "window_title": self.window_title,
             "context_type": self.context_type,
             "context_id": self.context_id,
             "display_name": self.display_name,
         }
+        if self.reading_section is not None:
+            d["reading_section"] = self.reading_section
+        return d
 
 
 class ActivityMonitor:
@@ -76,11 +84,16 @@ class ActivityMonitor:
             return self._last_context
 
         context_type = infer_context_type(winfo.app_name, winfo.window_title)
+        reading_section = None
+        if system == "Darwin":
+            reading_section = get_reading_section_macos(winfo.app_name, winfo.window_title)
+
         ctx = ActivityContext(
             app_name=winfo.app_name,
             window_title=winfo.window_title,
             context_type=context_type,
             context_id=winfo.context_id,
+            reading_section=reading_section,
         )
 
         # Check for change
