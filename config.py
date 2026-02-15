@@ -39,8 +39,9 @@ FEEDBACK_COOLDOWN_SEC = int(os.environ.get("FEEDBACK_COOLDOWN_SEC", "30"))   # 3
 POLL_INTERVAL = 2
 
 # Emotiv Cortex API (from https://www.emotiv.com/developer)
-EMOTIV_CLIENT_ID = os.environ.get("EMOTIV_CLIENT_ID", "")
-EMOTIV_CLIENT_SECRET = os.environ.get("EMOTIV_CLIENT_SECRET", "")
+# Supports client_id/client_secret (from .env.example) or EMOTIV_CLIENT_ID/EMOTIV_CLIENT_SECRET
+EMOTIV_CLIENT_ID = (os.environ.get("EMOTIV_CLIENT_ID") or os.environ.get("client_id") or "").strip()
+EMOTIV_CLIENT_SECRET = (os.environ.get("EMOTIV_CLIENT_SECRET") or os.environ.get("client_secret") or "").strip()
 
 # Mental commands: train one action (e.g. "push") in Emotiv; when detected, trigger pizza order
 MENTAL_COMMAND_PIZZA = os.environ.get("MENTAL_COMMAND_PIZZA", "push")

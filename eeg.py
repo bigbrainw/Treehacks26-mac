@@ -97,7 +97,13 @@ class EmotivCortexClient:
             self.on_metrics(metrics)
 
     def _on_error(self, *args, **kwargs):
-        print("Cortex error:", kwargs.get("error_data"))
+        err = kwargs.get("error_data") or {}
+        code = err.get("code")
+        msg = err.get("message", "")
+        print("Cortex error:", err)
+        if code == -32021:
+            print("  -> Invalid Client Credentials. Run: python check_emotiv_creds.py")
+            print("  -> Or use mock EEG: python app.py  (no headset required)")
 
     def close(self):
         if self._cortex:

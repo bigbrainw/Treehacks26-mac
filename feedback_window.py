@@ -48,22 +48,39 @@ class FeedbackWindow:
             bg="#1a1a2e",
         ).pack(anchor=tk.W)
 
-        self.feedback_label = tk.Label(
-            frame,
-            text="Waiting for feedback...",
+        # Scrollable text area for long feedback
+        text_frame = tk.Frame(frame, bg="#1a1a2e")
+        text_frame.pack(fill=tk.BOTH, expand=True)
+
+        scrollbar = tk.Scrollbar(text_frame, bg="#2a2a4e", troughcolor="#1a1a2e")
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.feedback_text = tk.Text(
+            text_frame,
+            wrap=tk.WORD,
             font=("Helvetica", 13),
             fg="#e8e8e8",
             bg="#1a1a2e",
-            wraplength=width - 32,
-            justify=tk.LEFT,
-            anchor=tk.W,
+            insertbackground="#e8e8e8",
+            relief=tk.FLAT,
+            padx=4,
+            pady=4,
+            state=tk.DISABLED,
+            yscrollcommand=scrollbar.set,
         )
-        self.feedback_label.pack(anchor=tk.W, fill=tk.BOTH, expand=True)
+        self.feedback_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.config(command=self.feedback_text.yview)
+
+        self.feedback_text.insert(tk.END, "Waiting for feedback...")
 
     def update_feedback(self, text: str) -> None:
         """Update the displayed feedback. Thread-safe via root.after(0, ...)."""
         def _set():
-            self.feedback_label.config(text=text or "—")
+            self.feedback_text.config(state=tk.NORMAL)
+            self.feedback_text.delete("1.0", tk.END)
+            self.feedback_text.insert(tk.END, text or "—")
+            self.feedback_text.config(state=tk.DISABLED)
+            self.feedback_text.see("1.0")  # scroll to top when new content arrives
         try:
             self.root.after(0, _set)
         except tk.TclError:
