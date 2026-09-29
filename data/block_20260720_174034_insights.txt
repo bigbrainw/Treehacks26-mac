@@ -1,0 +1,10 @@
+Goal: doom scrolling
+
+1. **Where attention went:** All 6 minutes stayed in **iTerm2**, with **zero switches**. Focus was steady but modest at **0.39–0.43**, peaking at **0.43 in minute 5**. No browser, social feed, or scrolling page appeared, so the activity did **not match the stated “doom scrolling” goal**.
+
+2. **Clearest pattern:** With iTerm2 continuously foregrounded, focus barely changed—only a **0.04 range**—while engagement remained higher (**0.51–0.65**). The largest gap was minute 2: **0.39 focus vs. 0.65 engagement**, suggesting activation without strong sustained attention.
+
+3. **Next-session changes:**
+   - **Clarify the goal before starting.** If doom scrolling is intentional, open the specific feed/site immediately; spending minutes 0–5 in iTerm2 produced no goal-aligned activity.
+   - **If iTerm2 work was actually intended, name the concrete terminal task.** The uninterrupted app use was promising, but focus stayed near **0.40** throughout; a defined command/coding objective would make the session measurable.
+   - **Use minute 2 as a warning signal:** high engagement (**0.65**) with low focus (**0.39**) means feeling busy was not the same as concentrating. Pause and restate the next terminal action when that split appears.

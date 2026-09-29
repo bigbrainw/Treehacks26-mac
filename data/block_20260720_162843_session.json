@@ -1,0 +1,49 @@
+{
+  "goal": "3 sex tape",
+  "started": "2026-07-20T16:29:13",
+  "baseline_sec": 6.0,
+  "work_minutes": 0.4,
+  "baseline": {
+    "focus": 0.40454545454545454,
+    "engagement": 0.63,
+    "stress": 0.3857142857142857,
+    "samples": 3
+  },
+  "running_apps_seen": [
+    "Activity Monitor",
+    "Brave Browser",
+    "ChatGPT",
+    "Claude",
+    "Code",
+    "Discord",
+    "EMOTIV Launcher",
+    "Finder",
+    "Google Chrome",
+    "LINE",
+    "Messages",
+    "Microsoft Word",
+    "Notes",
+    "Preview",
+    "QuickTime Player",
+    "Spotify",
+    "Terminal",
+    "Xcode",
+    "iTerm2"
+  ],
+  "per_minute": [
+    {
+      "minute": 0,
+      "focus": 0.5015151515151515,
+      "engagement": 0.6255555555555556,
+      "stress": 0.44285714285714284,
+      "locked_in_pct": 77
+    }
+  ],
+  "verdict": "Mixed pattern \u2014 no clean decay or sustain. Collect more blocks.",
+  "work": {
+    "focus": 0.5015151515151515,
+    "slope_per_min": -0.17309779693466434,
+    "pct_focused": 100,
+    "decay_minute": null
+  }
+}

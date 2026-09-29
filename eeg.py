@@ -1,4 +1,4 @@
-"""Emotiv Cortex client wrapper – streams met (mental state) to Jetson."""
+"""Emotiv Cortex client wrapper – streams met (mental state) + com (mental commands) to Jetson."""
 import time
 import threading
 
@@ -9,20 +9,22 @@ import config
 
 
 class EmotivCortexClient:
-    """Streams EEG metrics (met = mental state) from Emotiv headset."""
+    """Streams EEG metrics (met = mental state) and mental commands (com) from Emotiv headset."""
 
     def __init__(
         self,
         client_id=None,
         client_secret=None,
         on_metrics=None,
+        on_mental_command=None,
         streams=None,
         profile_name=None,
     ):
         self.client_id = client_id or config.EMOTIV_CLIENT_ID
         self.client_secret = client_secret or config.EMOTIV_CLIENT_SECRET
         self.on_metrics = on_metrics
-        self.streams = streams or ["met"]
+        self.on_mental_command = on_mental_command
+        self.streams = streams or ["met", "com"]
         self.profile_name = profile_name or getattr(config, "EMOTIV_PROFILE", "") or "Elijah"
         self.activity = ActivityMonitor(poll_interval=config.POLL_INTERVAL)
         self._cortex = None
@@ -40,6 +42,7 @@ class EmotivCortexClient:
         self._cortex.bind(query_profile_done=self._on_query_profile)
         self._cortex.bind(load_unload_profile_done=self._on_load_profile)
         self._cortex.bind(new_met_data=self._on_met)
+        self._cortex.bind(new_com_data=self._on_com)
         self._cortex.bind(new_data_labels=self._on_data_labels)
         self._cortex.bind(inform_error=self._on_error)
         self._met_cols = []  # cols from subscription; order of values in met array
@@ -95,6 +98,14 @@ class EmotivCortexClient:
                 "cols": getattr(self, "_met_cols", []) or None,
             }
             self.on_metrics(metrics)
+
+    def _on_com(self, *args, **kwargs):
+        data = kwargs.get("data")
+        if data and self.on_mental_command:
+            self.on_mental_command(
+                data.get("action", "neutral"),
+                float(data.get("power", 0)),
+            )
 
     def _on_error(self, *args, **kwargs):
         err = kwargs.get("error_data") or {}

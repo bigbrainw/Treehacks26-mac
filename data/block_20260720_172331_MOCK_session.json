@@ -1,0 +1,13 @@
+{
+  "goal": "ship the NeuroFocus demo",
+  "source": "mock",
+  "mock": true,
+  "started": "2026-07-20T16:42:31",
+  "baseline_sec": 60.0,
+  "work_minutes": 40.0,
+  "switch_pattern": {
+    "count": 83,
+    "pct_while_unfocused": 0
+  },
+  "verdict": "Mock demo session."
+}

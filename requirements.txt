@@ -2,3 +2,4 @@ websocket-client
 python-dispatch
 python-dotenv
 requests
+openai

@@ -177,6 +177,25 @@ def _get_focused_value_macos() -> Optional[str]:
     return None
 
 
+def get_running_apps_macos() -> list[str]:
+    """Names of visible (non-background) app processes currently running.
+    Captures what's OPEN competing for attention, not just the foreground window.
+    Requires no special permission. Returns [] on failure."""
+    try:
+        script = (
+            'tell application "System Events" to get name of '
+            '(every process whose background only is false)'
+        )
+        r = subprocess.run(
+            ["osascript", "-e", script], capture_output=True, text=True, timeout=3
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            return [a.strip() for a in r.stdout.strip().split(",") if a.strip()]
+    except Exception:
+        pass
+    return []
+
+
 def infer_context_type(app_name: str, window_title: str) -> str:
     """
     Infer whether this is an app, website, or file based on app/title.

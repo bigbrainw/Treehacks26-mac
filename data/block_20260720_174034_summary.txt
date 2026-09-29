@@ -1,0 +1,26 @@
+
+==========================================================
+  FOCUS BLOCK SUMMARY
+  Source:   emotiv
+  Goal:     doom scrolling
+  Baseline: 20s (2 samples)   Work: 5 min (30 samples)
+==========================================================
+  BASELINE (resting):  focus 0.48  eng 0.50  stress 0.47
+
+  WORK, per minute (vs baseline focus):
+  min | focus  eng   stress | locked-in | vs base | trend
+  ----+---------------------+-----------+---------+-------------
+    0 | 0.40  0.56  0.37 |    42%    |  -0.08  |      ####
+    1 | 0.39  0.58  0.35 |    50%    |  -0.09  | flat ####
+    2 | 0.43  0.63  0.34 |    50%    |  -0.06  | up   ####
+    3 | 0.41  0.63  0.28 |    66%    |  -0.07  | flat ####
+    4 | 0.39  0.59  0.34 |    40%    |  -0.09  | flat ####
+
+  Work focus avg: 0.40  (baseline 0.48)   time 'focused': 100%
+  Focus trend: +0.001 /min
+
+  VERDICT:
+    Mixed pattern — no clean decay or sustain. Collect more blocks.
+
+  Running during session (19): Activity Monitor, Brave Browser, ChatGPT, Claude, Code, Discord, EMOTIV Launcher, Finder, Google Chrome, LINE, Messages, Microsoft Word, Notes, Preview, QuickTime Player, Spotify, Terminal, Xcode, iTerm2
+==========================================================

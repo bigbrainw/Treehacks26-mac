@@ -7,7 +7,8 @@ When you stay on difficult content too long, triggers agent for help. Feedback i
 
 Usage:
   python app.py                            # Real activity + mock EEG
-  python app.py --eeg                      # Real Emotiv headset (requires .env)
+  python app.py --eeg                      # Real Emotiv + trained lift command (profile Elijah)
+  python app.py --eeg --profile Elijah     # Use profile trained in Emotiv BCI (lift → scroll)
   python app.py --long 45                  # 45 sec on page before trigger
   python app.py --no-feedback              # No overlay window
 """
@@ -34,6 +35,7 @@ from data_schema import (
     ActivitySnapshot,
     CollectorPayload,
     EEGMetricsSnapshot,
+    MentalCommandSnapshot,
     MentalStateSnapshot,
 )
 from feedback_window import FeedbackWindow
@@ -72,6 +74,64 @@ def _ctx_to_snapshot(ctx, duration_seconds: float | None = None) -> ActivitySnap
     )
 
 
+def _is_pdf(ctx) -> bool:
+    """True if current context is viewing a PDF."""
+    if not ctx:
+        return False
+    title = (getattr(ctx, "window_title", "") or "").lower()
+    cid = (getattr(ctx, "context_id", "") or "").lower()
+    return ".pdf" in title or ".pdf" in cid
+
+
+def _is_reels(ctx) -> bool:
+    """True if viewing reels / shorts (Instagram Reels, YouTube Shorts, TikTok)."""
+    if not ctx:
+        return False
+    title = (getattr(ctx, "window_title", "") or "").lower()
+    cid = (getattr(ctx, "context_id", "") or "").lower()
+    section = (getattr(ctx, "reading_section", "") or "").lower()
+    text = f"{title} {cid} {section}"
+    return (
+        "reel" in text
+        or "/shorts" in text
+        or "youtube shorts" in title
+        or "instagram" in cid and "reel" in text
+        or "tiktok" in text
+    )
+
+
+LIFT_SCROLL_COOLDOWN_SEC = 2.5
+LIFT_SCROLL_POWER_THRESHOLD = 0.6
+
+
+def _scroll_content_lift_macos(last_scroll_at: list, app_name: str | None = None) -> bool:
+    """Scroll down (Page Down) when lift detected. Rate-limited. Activates target app first."""
+    now = time.time()
+    if last_scroll_at[0] and (now - last_scroll_at[0]) < LIFT_SCROLL_COOLDOWN_SEC:
+        return False
+    try:
+        import subprocess
+        # Target app where PDF/reels are; skip if overlay or unknown
+        target = (app_name or "").strip()
+        if target and target.lower() not in ("python", "agent feedback", ""):
+            # Activate target app so key goes there, not to overlay/terminal
+            script = f'tell application "{target}" to activate'
+            subprocess.run(["osascript", "-e", script], capture_output=True, timeout=1)
+            time.sleep(0.25)
+        subprocess.run(
+            ["osascript", "-e", 'tell application "System Events" to key code 121'],
+            capture_output=True,
+            timeout=2,
+        )
+        last_scroll_at[0] = now
+        print(f"  [lift→scroll] Page Down ({target or 'frontmost'})")
+        return True
+    except Exception as e:
+        print(f"  [lift→scroll] Error: {e}")
+        print("    (Grant Terminal/Python Accessibility in System Settings → Privacy & Security → Accessibility)")
+        return False
+
+
 # --- Shared state ---
 class AppState:
     def __init__(self):
@@ -96,6 +156,8 @@ def run_app(
     long_sec: float = 180,
     follow_up_interval_sec: float = 300,
     poll_interval: float = 0.3,
+    lift_power_threshold: float = LIFT_SCROLL_POWER_THRESHOLD,
+    emotiv_profile: str | None = None,
 ) -> None:
     if not websocket:
         print("Error: pip install websocket-client")
@@ -112,7 +174,8 @@ def run_app(
     )
 
     # Overlay exclusion: when overlay is focused, use last real context for session/help
-    last_real_context = [None]  # list to allow mutation in closure
+    last_real_context = [None]
+    last_lift_scroll_at = [0.0]  # rate limit: one scroll per cooldown
 
     def stop(_=None, __=None):
         nonlocal running
@@ -154,6 +217,19 @@ def run_app(
                 print(f"  [WS] Sent to backend: {payload.type}" + (" | " + " | ".join(parts) if parts else ""))
             except Exception as e:
                 print("  Send error:", e)
+
+    def handle_mental_command(action: str, power: float):
+        """Send mental command; bind lift→scroll when reading PDFs/reels (rate-limited)."""
+        send_payload(CollectorPayload(
+            type="mental_command",
+            timestamp=time.time(),
+            mental_command=MentalCommandSnapshot(action=action, power=power),
+        ))
+        ctx = activity.get_current_activity()
+        effective_ctx = last_real_context[0] if _is_overlay(ctx) else ctx
+        if action == "lift" and power >= lift_power_threshold and (_is_pdf(effective_ctx) or _is_reels(effective_ctx)):
+            app = getattr(effective_ctx, "app_name", None) if effective_ctx else None
+            _scroll_content_lift_macos(last_lift_scroll_at, app_name=app)
 
     def _make_activity_snapshot(duration_seconds: float | None = None) -> ActivitySnapshot | None:
         ctx = activity.get_current_activity()
@@ -241,6 +317,7 @@ def run_app(
     # --- EEG source ---
     if use_mock_eeg:
         MOCK_MET = {"met": [True, 0.65, True, 0.42, 0.38, True, 0.55], "time": 0}
+        MOCK_ACTIONS = ["neutral", "push", "pull", "lift", "drop"]
         mock_count = [0]
 
         def mock_eeg_loop():
@@ -250,6 +327,11 @@ def run_app(
                 met = dict(MOCK_MET)
                 met["time"] = t
                 c = mock_count[0]
+                # Mock mental command every 4th cycle; lift→scroll when PDF/reels
+                if c % 4 == 0:
+                    action = MOCK_ACTIONS[(c // 4) % len(MOCK_ACTIONS)]
+                    power = 0.3 + (c % 7) * 0.1
+                    handle_mental_command(action, power)
                 ms = parse_met_to_mental_state({
                     "met": [
                         True, 0.55 + 0.15 * ((c % 5) / 5),  # eng.isActive, eng
@@ -302,15 +384,20 @@ def run_app(
                     ))
                     send_payload(CollectorPayload(type="mental_state", timestamp=t, mental_state=ms))
 
+            def on_mental_command(action: str, power: float):
+                handle_mental_command(action, power)
+
+            profile = emotiv_profile or getattr(config, "EMOTIV_PROFILE", "Elijah")
             emotiv = EmotivCortexClient(
                 client_id=config.EMOTIV_CLIENT_ID,
                 client_secret=config.EMOTIV_CLIENT_SECRET,
                 on_metrics=on_metrics,
-                streams=["met"],
-                profile_name=getattr(config, "EMOTIV_PROFILE", "Elijah"),
+                on_mental_command=on_mental_command,
+                streams=["met", "com"],
+                profile_name=profile,
             )
             emotiv.connect()
-            print(f"  Emotiv Cortex: connecting... (met only, profile={getattr(config, 'EMOTIV_PROFILE', 'Elijah')})")
+            print(f"  Emotiv Cortex: connecting... (met + com, profile={profile}, lift→scroll)")
 
             def activity_sender():
                 while running:
@@ -347,7 +434,12 @@ def run_app(
     print("\n--- Focus Agent ---")
     print(f"  Jetson WS: {jetson_ws_url}")
     print(f"  Activity: real (app, window, context type)")
-    print(f"  EEG: {'mock' if use_mock_eeg else 'real Emotiv'}")
+    print(f"  EEG: {'mock' if use_mock_eeg else 'real Emotiv'} (met + com)")
+    if use_mock_eeg:
+        print(f"  Binds: lift → scroll down (PDF/reels, power>={lift_power_threshold}, {LIFT_SCROLL_COOLDOWN_SEC}s cooldown)")
+    else:
+        profile = emotiv_profile or getattr(config, "EMOTIV_PROFILE", "Elijah")
+        print(f"  Binds: lift (profile {profile}) → scroll down (PDF/reels, power>={lift_power_threshold}, {LIFT_SCROLL_COOLDOWN_SEC}s cooldown)")
     print(f"  Triggers: warn={warn_sec}s, long={long_sec}s")
     if show_feedback:
         print("  Feedback: overlay window")
@@ -365,11 +457,14 @@ def run_app(
 def main():
     p = argparse.ArgumentParser(description="Focus Agent — real activity + time on page + EEG → Jetson")
     p.add_argument("--url", default=None, help="Jetson base URL (default: from config)")
-    p.add_argument("--eeg", action="store_true", dest="real_eeg", help="Use real Emotiv headset. Default: mock EEG.")
+    p.add_argument("--eeg", "--real-eeg", action="store_true", dest="real_eeg", help="Use real Emotiv headset. Default: mock EEG.")
+    p.add_argument("--profile", default=None, help="Emotiv BCI profile name (trained lift, etc.). Default: Elijah from .env")
     p.add_argument("--no-feedback", action="store_true", help="No overlay window")
     p.add_argument("--warn", type=float, default=None, help="Warn threshold (sec). Default: from config or 120.")
     p.add_argument("--long", type=int, default=None, help="Seconds on page before stuck trigger. Default: from config or 180.")
     p.add_argument("--poll", type=float, default=0.3)
+    p.add_argument("--lift-threshold", type=float, default=LIFT_SCROLL_POWER_THRESHOLD,
+                   help=f"Min power for lift→scroll (default: {LIFT_SCROLL_POWER_THRESHOLD})")
     args = p.parse_args()
 
     base = args.url or config.JETSON_BASE.rstrip("/")
@@ -388,6 +483,8 @@ def main():
         long_sec=long_sec,
         follow_up_interval_sec=follow_up,
         poll_interval=args.poll,
+        lift_power_threshold=args.lift_threshold,
+        emotiv_profile=args.profile,
     )
 
 

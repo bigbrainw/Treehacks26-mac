@@ -1,0 +1,80 @@
+{
+  "goal": "doom scrolling",
+  "source": "emotiv",
+  "mock": false,
+  "started": "2026-07-20T17:45:56",
+  "baseline_sec": 20.0,
+  "work_minutes": 5.0,
+  "baseline": {
+    "focus": 0.4815235,
+    "engagement": 0.4973695,
+    "stress": 0.4698095,
+    "samples": 2
+  },
+  "running_apps_seen": [
+    "Activity Monitor",
+    "Brave Browser",
+    "ChatGPT",
+    "Claude",
+    "Code",
+    "Discord",
+    "EMOTIV Launcher",
+    "Finder",
+    "Google Chrome",
+    "LINE",
+    "Messages",
+    "Microsoft Word",
+    "Notes",
+    "Preview",
+    "QuickTime Player",
+    "Spotify",
+    "Terminal",
+    "Xcode",
+    "iTerm2"
+  ],
+  "per_minute": [
+    {
+      "minute": 0,
+      "focus": 0.40166857142857143,
+      "engagement": 0.5593034285714286,
+      "stress": 0.37100485714285714,
+      "locked_in_pct": 42
+    },
+    {
+      "minute": 1,
+      "focus": 0.3916361666666666,
+      "engagement": 0.5834118333333334,
+      "stress": 0.34552066666666664,
+      "locked_in_pct": 50
+    },
+    {
+      "minute": 2,
+      "focus": 0.4264293333333333,
+      "engagement": 0.6324146666666667,
+      "stress": 0.33853316666666666,
+      "locked_in_pct": 50
+    },
+    {
+      "minute": 3,
+      "focus": 0.40718533333333334,
+      "engagement": 0.6255205,
+      "stress": 0.2826648333333333,
+      "locked_in_pct": 66
+    },
+    {
+      "minute": 4,
+      "focus": 0.3918272,
+      "engagement": 0.5852382,
+      "stress": 0.3363238,
+      "locked_in_pct": 40
+    }
+  ],
+  "verdict": "Mixed pattern \u2014 no clean decay or sustain. Collect more blocks.",
+  "work": {
+    "focus": 0.40407736666666666,
+    "slope_per_min": 0.0013376704649141948,
+    "pct_focused": 100,
+    "decay_minute": 1
+  },
+  "switches": []
+}

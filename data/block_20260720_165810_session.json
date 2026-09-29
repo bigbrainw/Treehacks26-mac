@@ -1,0 +1,219 @@
+{
+  "goal": "ship a ugly ass prototype",
+  "source": "emotiv",
+  "mock": false,
+  "started": "2026-07-20T17:24:13",
+  "baseline_sec": 60.0,
+  "work_minutes": 25.0,
+  "baseline": {
+    "focus": 0.41798339999999995,
+    "engagement": 0.7377026,
+    "stress": 0.34894980000000003,
+    "samples": 5
+  },
+  "running_apps_seen": [
+    "Activity Monitor",
+    "Brave Browser",
+    "ChatGPT",
+    "Claude",
+    "Code",
+    "Discord",
+    "EMOTIV Launcher",
+    "Finder",
+    "Google Chrome",
+    "LINE",
+    "Messages",
+    "Microsoft Word",
+    "Notes",
+    "Preview",
+    "QuickTime Player",
+    "Spotify",
+    "Terminal",
+    "Xcode",
+    "iTerm2"
+  ],
+  "per_minute": [
+    {
+      "minute": 0,
+      "focus": 0.46046385714285715,
+      "engagement": 0.7061398571428572,
+      "stress": 0.4070031428571429,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 1,
+      "focus": 0.5173248333333333,
+      "engagement": 0.6884738333333335,
+      "stress": 0.408153,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 2,
+      "focus": 0.5348871666666667,
+      "engagement": 0.6946195,
+      "stress": 0.29297483333333335,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 3,
+      "focus": 0.46499850000000004,
+      "engagement": 0.6868831666666667,
+      "stress": 0.2894586666666667,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 4,
+      "focus": 0.4840588333333333,
+      "engagement": 0.6725283333333333,
+      "stress": 0.32448683333333334,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 5,
+      "focus": 0.5225354999999999,
+      "engagement": 0.6790036666666667,
+      "stress": 0.3640463333333333,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 6,
+      "focus": 0.5536968333333333,
+      "engagement": 0.6022711666666667,
+      "stress": 0.26323616666666666,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 7,
+      "focus": 0.47516933333333333,
+      "engagement": 0.5758948333333334,
+      "stress": 0.2947005,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 8,
+      "focus": 0.5275141666666666,
+      "engagement": 0.5240843333333333,
+      "stress": 0.3180381666666667,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 9,
+      "focus": 0.5040568333333334,
+      "engagement": 0.5363351666666667,
+      "stress": 0.325054,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 10,
+      "focus": 0.49243566666666666,
+      "engagement": 0.5434725,
+      "stress": 0.28306733333333334,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 11,
+      "focus": 0.5511805,
+      "engagement": 0.5721001666666666,
+      "stress": 0.28435116666666665,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 12,
+      "focus": 0.57277,
+      "engagement": 0.5830486666666667,
+      "stress": 0.31822866666666666,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 13,
+      "focus": 0.528067,
+      "engagement": 0.6534845,
+      "stress": 0.4946743333333334,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 14,
+      "focus": 0.5499035,
+      "engagement": 0.6308561666666667,
+      "stress": 0.4997931666666667,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 15,
+      "focus": 0.5380345,
+      "engagement": 0.49868399999999996,
+      "stress": 0.41029099999999996,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 16,
+      "focus": 0.5731893333333333,
+      "engagement": 0.591794,
+      "stress": 0.3208681666666667,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 17,
+      "focus": 0.6492995,
+      "engagement": 0.6623281666666666,
+      "stress": 0.4144251666666667,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 18,
+      "focus": 0.6500971666666667,
+      "engagement": 0.6152371666666666,
+      "stress": 0.3951188333333333,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 19,
+      "focus": 0.6838615,
+      "engagement": 0.6283573333333333,
+      "stress": 0.47630100000000003,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 20,
+      "focus": 0.6683886666666666,
+      "engagement": 0.6443291666666667,
+      "stress": 0.34070266666666665,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 21,
+      "focus": 0.6088873333333333,
+      "engagement": 0.6053848333333334,
+      "stress": 0.31052583333333333,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 22,
+      "focus": 0.49337349999999996,
+      "engagement": 0.5793675,
+      "stress": 0.49629433333333334,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 23,
+      "focus": 0.5019823333333333,
+      "engagement": 0.576439,
+      "stress": 0.6198071666666667,
+      "locked_in_pct": 100
+    },
+    {
+      "minute": 24,
+      "focus": 0.390454,
+      "engagement": 0.6296958333333333,
+      "stress": 0.609678,
+      "locked_in_pct": 50
+    }
+  ],
+  "verdict": "Focus sustained the full 25 min (avg 0.54 vs baseline 0.42). Could try a LONGER block.",
+  "work": {
+    "focus": 0.5393393774834437,
+    "slope_per_min": 0.003399821180237652,
+    "pct_focused": 94,
+    "decay_minute": null
+  }
+}

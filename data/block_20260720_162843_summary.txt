@@ -1,0 +1,21 @@
+
+==========================================================
+  FOCUS BLOCK SUMMARY
+  Goal:     3 sex tape
+  Baseline: 6s (3 samples)   Work: 0.4 min (9 samples)
+==========================================================
+  BASELINE (resting):  focus 0.40  eng 0.63  stress 0.39
+
+  WORK, per minute (vs baseline focus):
+  min | focus  eng   stress | locked-in | vs base | trend
+  ----+---------------------+-----------+---------+-------------
+    0 | 0.50  0.63  0.44 |    77%    |  +0.10  |      #####
+
+  Work focus avg: 0.50  (baseline 0.40)   time 'focused': 100%
+  Focus trend: -0.173 /min
+
+  VERDICT:
+    Mixed pattern — no clean decay or sustain. Collect more blocks.
+
+  Running during session (19): Activity Monitor, Brave Browser, ChatGPT, Claude, Code, Discord, EMOTIV Launcher, Finder, Google Chrome, LINE, Messages, Microsoft Word, Notes, Preview, QuickTime Player, Spotify, Terminal, Xcode, iTerm2
+==========================================================

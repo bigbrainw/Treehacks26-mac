@@ -1,0 +1,15 @@
+Goal: ship a ugly ass prototype
+
+### 1. Where attention went
+- **Prototype work:** iTerm2 at mins **1–3** built momentum, with focus rising **0.48 → 0.53**. ChatGPT at mins **5–7** also improved focus **0.48 → 0.56**.
+- **Social/promotion captured the strongest attention:** X compose at mins **17–20** held focus at **0.59, 0.65, 0.65, 0.69**—the session peak. That is sustained attention, but only goal-aligned if posting was required to “ship.”
+- **Drains:** Instagram at min **4** interrupted the initial build streak at **0.47**. X home then slid from **0.66 at min 21 to 0.58 at min 22**.
+- **End-of-session debugging broke down:** iTerm2 focus fell **0.50 → 0.49 → 0.39** at mins **23–25**, while stress peaked at **0.67** at min 24.
+
+### 2. Clearest pattern
+**You focused harder on announcing/browsing than building.** X compose climbed to **0.69**, whereas terminal implementation peaked at **0.54** early and collapsed to **0.39** late. High attention was real, but much of it was diverted from the prototype.
+
+### 3. Changes for next session
+1. **Block Instagram and X until one runnable prototype milestone exists.** Instagram broke the rising terminal streak at min 4; X consumed mins **11–22** and captured your best focus.
+2. **Front-load a 15-minute iTerm2 + ChatGPT build block.** Those tools produced rising focus at mins **1–3** and **5–7**. Keep social closed during that momentum.
+3. **Use a debugging cutoff:** if terminal focus falls for two minutes, paste the exact error into ChatGPT and define the next tiny test. At mins **23–25**, continuing unaided produced **0.50 → 0.39 focus** and sharply higher stress, not progress.
